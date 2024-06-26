@@ -9,10 +9,13 @@ from PyQt5.QtCore import Qt
 
 from pythonosc import udp_client
 # Define the IP address and port of the OSC server
-ip = "127.0.0.1"  # The IP address of the OSC server
-port = 8000       # The port on which the OSC server is listening
+ip = "192.168.0.101"  # The IP address of the OSC server
+port = 9999       # The port on which the OSC server is listening
 
-address = "/estado" #/test/address"
+address_opacity = "/composition/layers/1/video/opacity" #/test/address"
+address_color_r = "/composition/layers/1/video/effects/colorize/effect/color/red" #/test/address"
+address_color_g = "/composition/layers/1/video/effects/colorize/effect/color/green" #/test/address"
+address_color_b = "/composition/layers/1/video/effects/colorize/effect/color/blue" #/test/address"
 
 # Create an OSC client
 client = udp_client.SimpleUDPClient(ip, port)
@@ -34,7 +37,7 @@ def check_overlap(start1, end1, start2, end2):
     return start1 <= end2 and start2 <= end1
 
 # Take the first 100 genes for visualization
-saved_subset = saved.head(100)
+saved_subset = saved.head(1000)
 
 # Create an interval tree
 interval_tree = IntervalTree()
@@ -101,8 +104,11 @@ def update(frame):
         # Update description window text
         desc_window.update_text(gene1['desc'])
         value = str(gene1["end"])[-1:]
-        client.send_message(address, value)
-        print(f"Sent OSC message to {address} with value {value}")
+        client.send_message(address_opacity, float(value)*.1)
+        client.send_message(address_color_r, float(str(gene1["end"])[-2:-1]))
+        client.send_message(address_color_g, float(str(gene1["end"])[-3:-2]))
+        client.send_message(address_color_b, float(str(gene1["end"])[-4:-3]))
+        print(f"Sent OSC message to address with value {value}")
 
     return node_collection, edge_collection, label_collection
 
