@@ -79,3 +79,11 @@ Read more about it here: https://www.toptal.com/python/comprehensive-introductio
 `python3 gen.py`
 
 
+
+# Mandar OSC
+- Conectar mi compu al router.
+- deshabilitar la seguridad en http://tplinklogin.net/
+- Conectar la compu de Laura por wifi al router.
+- preguntar por el IP de laura,en una terminal con ifconfig | grep inet (debería empezar en 192)
+- mandar a ese IP.
+
