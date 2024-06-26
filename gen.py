@@ -7,6 +7,24 @@ from matplotlib.animation import FuncAnimation
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt
 
+from pythonosc import udp_client
+# Define the IP address and port of the OSC server
+ip = "127.0.0.1"  # The IP address of the OSC server
+port = 8000       # The port on which the OSC server is listening
+
+address = "/estado" #/test/address"
+
+# Create an OSC client
+client = udp_client.SimpleUDPClient(ip, port)
+print("created UDP client for OSC messaging")
+
+"""
+# example Send an OSC message
+value = 123
+
+client.send_message(address, value)
+print(f"Sent OSC message to {address} with value {value}")
+"""
 
 # Load your gene data
 saved = pd.read_pickle('gene_data.pkl')
@@ -82,6 +100,9 @@ def update(frame):
 
         # Update description window text
         desc_window.update_text(gene1['desc'])
+        value = str(gene1["end"])[-1:]
+        client.send_message(address, value)
+        print(f"Sent OSC message to {address} with value {value}")
 
     return node_collection, edge_collection, label_collection
 
@@ -143,7 +164,7 @@ fig.canvas.mpl_connect('key_press_event', on_key_press)
 # Create animation
 anim = FuncAnimation(fig, update, frames=len(saved_subset), interval=interval, blit=False)
 
-fig.canvas.set_window_title('Genoma')
+fig.canvas.setWindowTitle('Genoma')
 
 # Show plot
 plt.show()
