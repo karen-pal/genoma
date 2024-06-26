@@ -19,4 +19,4 @@ Read more about it here: https://www.toptal.com/python/comprehensive-introductio
 ## run simulation
 `python3 gen.py`
 
-<img src="./Figure_first_100.png"</img>
+<img src="./Figure_first_100.png"/>
