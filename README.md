@@ -21,7 +21,7 @@ Con eso creo un dataset de esta pinta:
 
 ```
 
-De estos datos me interesó el start y end de cada gen. Hay un mar de información a adquirir si une quiere empezar a sacar hipótesis semánticas sobre el contenido del genoma - pero una hipótesis interesante es que la locación de un gen contiene información localizada , codificando geométricamente información de relación entre genes y funciones de genes.
+De estos datos me interesó el start y end de cada gen. Hay un mar de información a adquirir si une quiere empezar a sacar hipótesis semánticas sobre el contenido del genoma - pero una hipótesis interesante es que un gen contiene información localizada , es decir existe información codificada geométricamente de relación entre genes y funciones de genes.
 
 > Genomic Location: Genes located close to each other on the same chromosome (syntenic genes) may be functionally related or co-regulated. Analyzing genomic coordinates (start and end positions) can reveal clustering or co-localization of genes.
 
