@@ -6,10 +6,11 @@ from intervaltree import IntervalTree
 from matplotlib.animation import FuncAnimation
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt
-
+import time
 from pythonosc import udp_client
 # Define the IP address and port of the OSC server
 ip = "192.168.0.101"  # The IP address of the OSC server
+ip_val = "192.168.1.100"  # The IP address of the OSC server
 port = 9999       # The port on which the OSC server is listening
 
 address_opacity = "/composition/layers/1/video/opacity" #/test/address"
@@ -17,8 +18,14 @@ address_color_r = "/composition/layers/1/video/effects/colorize/effect/color/red
 address_color_g = "/composition/layers/1/video/effects/colorize/effect/color/green" #/test/address"
 address_color_b = "/composition/layers/1/video/effects/colorize/effect/color/blue" #/test/address"
 
+address_distortion ="/composition/layers/1/video/effects/distortion/effect/distort" #/test/address"
+
+address_distortion_radius ="/composition/layers/1/video/effects/distortion/effect/radius" #/test/address"
+ 
+address_data_random_ = "/data"
 # Create an OSC client
-client = udp_client.SimpleUDPClient(ip, port)
+client_data = udp_client.SimpleUDPClient(ip_val, port)
+client_projection = udp_client.SimpleUDPClient(ip, port)
 print("created UDP client for OSC messaging")
 
 """
@@ -76,6 +83,10 @@ def update(frame):
         for gene2_id in interval_tree[gene1['start']:gene1['end']]:
             if gene1['gene_id'] != gene2_id:
                 edge = (gene1['gene_id'], gene2_id)
+                dist = str(gene1["end"])[-1:]
+                dist2 = str(gene1["end"])[-2:-1]
+                client_projection.send_message(address_distortion, float(dist)*.01)
+                client_projection.send_message(address_distortion_radius, float(dist2)*.01)
                 if edge not in G.edges():
                     G.add_edge(*edge)
 
@@ -104,11 +115,32 @@ def update(frame):
         # Update description window text
         desc_window.update_text(gene1['desc'])
         value = str(gene1["end"])[-1:]
-        client.send_message(address_opacity, float(value)*.1)
-        client.send_message(address_color_r, float(str(gene1["end"])[-2:-1]))
-        client.send_message(address_color_g, float(str(gene1["end"])[-3:-2]))
-        client.send_message(address_color_b, float(str(gene1["end"])[-4:-3]))
-        print(f"Sent OSC message to address with value {value}")
+        value_random = int(str(gene1["end"])[-3:])
+        if value_random > 100:
+            value_random = str(value_random)[-2:]
+        client_projection.send_message(address_opacity, float(value)*.1)
+        client_data.send_message("/data", int(value_random))
+        client_projection.send_message(address_color_r, float(str(gene1["end"])[-2:-1]))
+        client_projection.send_message(address_color_g, float(str(gene1["end"])[-3:-2]))
+        client_projection.send_message(address_color_b, float(str(gene1["end"])[-4:-3]))
+        print(f"Sent OSC message to address with value {value_random}")
+        value_random = int(value_random)
+        if value_random <10:
+            to_sleep=10
+        elif value_random < 25:
+            to_sleep=19000
+        elif value_random < 50:
+            to_sleep=22000
+        elif value_random < 75:
+            to_sleep=15000
+        elif value_random<85:
+            to_sleep=17000
+        elif value_random<92:
+            to_sleep=5000
+        else:
+            to_sleep=4000
+        print("about to sleep > ", to_sleep)
+        time.sleep(to_sleep)
 
     return node_collection, edge_collection, label_collection
 
